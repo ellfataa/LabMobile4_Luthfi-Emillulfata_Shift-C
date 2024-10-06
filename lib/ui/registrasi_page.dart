@@ -1,33 +1,17 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Warung Purba',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const RegistrasiPage(),
-    );
-  }
-}
+import 'package:prakpemob/bloc/registrasi_bloc.dart';
+import 'package:prakpemob/widget/success_dialog.dart';
+import 'package:prakpemob/widget/warning_dialog.dart';
 
 class RegistrasiPage extends StatefulWidget {
   const RegistrasiPage({Key? key}) : super(key: key);
-
   @override
   _RegistrasiPageState createState() => _RegistrasiPageState();
 }
 
 class _RegistrasiPageState extends State<RegistrasiPage> {
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
   final _namaTextboxController = TextEditingController();
   final _emailTextboxController = TextEditingController();
   final _passwordTextboxController = TextEditingController();
@@ -35,51 +19,39 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 204, 239, 253),
       appBar: AppBar(
         title: const Text("Registrasi Luthfi Emillulfata || H1D022017"),
+        backgroundColor: const Color.fromARGB(255, 4, 110, 197),
       ),
-      body: Container(
-        color: const Color.fromARGB(255, 255, 255, 143),
+      body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Warung Purba (Warung Purbalingga)",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _namaTextField(),
+                      const SizedBox(height: 20),
+                      _emailTextField(),
+                      const SizedBox(height: 20),
+                      _passwordTextField(),
+                      const SizedBox(height: 20),
+                      _passwordKonfirmasiTextField(),
+                      const SizedBox(height: 30),
+                      _buttonRegistrasi(),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  Image.asset(
-                    'lib/assets/images/warungpurba.png', // Path ke gambar lokal
-                    height: 150,
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Formulir Registrasi Pelanggan Warung Purba",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _namaTextField(),
-                  const SizedBox(height: 10),
-                  _emailTextField(),
-                  const SizedBox(height: 10),
-                  _passwordTextField(),
-                  const SizedBox(height: 10),
-                  _passwordKonfirmasiTextField(),
-                  const SizedBox(height: 20),
-                  _buttonRegistrasi(),
-                ],
+                ),
               ),
             ),
           ),
@@ -91,9 +63,12 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
   // Membuat Textbox Nama
   Widget _namaTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: "Nama",
-        hintText: "Registrasi Luthfi Emillulfata", // Placeholder ditambahkan
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        prefixIcon: Icon(Icons.person, color: Colors.blue[700]),
       ),
       keyboardType: TextInputType.text,
       controller: _namaTextboxController,
@@ -106,12 +81,15 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
     );
   }
 
-  // Membuat Textbox Email
+  // Membuat Textbox email
   Widget _emailTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: "Email",
-        hintText: "Registrasi Luthfi Emillulfata", // Placeholder ditambahkan
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        prefixIcon: Icon(Icons.email, color: Colors.blue[700]),
       ),
       keyboardType: TextInputType.emailAddress,
       controller: _emailTextboxController,
@@ -130,14 +108,16 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
     );
   }
 
-  // Membuat Textbox Password
+  // Membuat Textbox password
   Widget _passwordTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: "Password",
-        hintText: "Registrasi Luthfi Emillulfata", // Placeholder ditambahkan
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        prefixIcon: Icon(Icons.lock, color: Colors.blue[700]),
       ),
-      keyboardType: TextInputType.text,
       obscureText: true,
       controller: _passwordTextboxController,
       validator: (value) {
@@ -149,14 +129,16 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
     );
   }
 
-  // Membuat Textbox Konfirmasi Password
+  // Membuat textbox Konfirmasi Password
   Widget _passwordKonfirmasiTextField() {
     return TextFormField(
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: "Konfirmasi Password",
-        hintText: "Registrasi Luthfi Emillulfata", // Placeholder ditambahkan
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        prefixIcon: Icon(Icons.lock, color: Colors.blue[700]),
       ),
-      keyboardType: TextInputType.text,
       obscureText: true,
       validator: (value) {
         if (value != _passwordTextboxController.text) {
@@ -167,26 +149,65 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
     );
   }
 
-  // Membuat Tombol Registrasi dengan warna biru muda
+  // Membuat Tombol Registrasi
   Widget _buttonRegistrasi() {
-    return ElevatedButton(
-      child: const Text("Registrasi"),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color.fromARGB(255, 106, 208, 255),
-        textStyle: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 130, 255, 180),
+          padding: const EdgeInsets.symmetric(vertical: 15.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
-        foregroundColor: Colors.black,
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        child: _isLoading
+            ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              )
+            : const Text(
+                "Registrasi",
+                style: TextStyle(fontSize: 18),
+              ),
+        onPressed: () {
+          var validate = _formKey.currentState!.validate();
+          if (validate) {
+            if (!_isLoading) _submit();
+          }
+        },
       ),
-      onPressed: () {
-        var validate = _formKey.currentState!.validate();
-        if (validate) {
-          // Lakukan sesuatu saat form valid
-        }
-      },
     );
+  }
+
+  void _submit() {
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
+    RegistrasiBloc.registrasi(
+            nama: _namaTextboxController.text,
+            email: _emailTextboxController.text,
+            password: _passwordTextboxController.text)
+        .then((value) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => SuccessDialog(
+                description: "Registrasi berhasil, silahkan login",
+                okClick: () {
+                  Navigator.pop(context);
+                },
+              ));
+    }, onError: (error) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => const WarningDialog(
+                description: "Registrasi gagal, silahkan coba lagi",
+              ));
+    });
+    setState(() {
+      _isLoading = false;
+    });
   }
 }
